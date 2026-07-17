@@ -1,7 +1,7 @@
 {
   "name": "anken-kanri-desktop",
   "productName": "clearAI Dashboard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "clearAI 案件管理ダッシュボード デスクトップアプリ (Windows / macOS)",
   "main": "main.js",
   "author": "clearAI Inc.",

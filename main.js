@@ -1,6 +1,45 @@
-const { app, BrowserWindow, shell } = require("electron");
+const { app, BrowserWindow, shell, session } = require("electron");
+const fs = require("fs");
+const path = require("path");
 
 const APP_URL = "https://anken-kanri-ten.vercel.app";
+const APP_ORIGIN = new URL(APP_URL).origin;
+
+function isAppUrl(rawUrl) {
+  try {
+    return new URL(rawUrl).origin === APP_ORIGIN;
+  } catch {
+    return false;
+  }
+}
+
+// 外部に渡してよいのはブラウザ/メーラーで開く一般的なリンクのみ
+function isSafeExternalUrl(rawUrl) {
+  try {
+    const { protocol } = new URL(rawUrl);
+    return protocol === "https:" || protocol === "http:" || protocol === "mailto:";
+  } catch {
+    return false;
+  }
+}
+
+const boundsFile = () => path.join(app.getPath("userData"), "window-bounds.json");
+
+function loadBounds() {
+  try {
+    const b = JSON.parse(fs.readFileSync(boundsFile(), "utf8"));
+    if (Number.isFinite(b.width) && Number.isFinite(b.height)) return b;
+  } catch {}
+  return { width: 1360, height: 860 };
+}
+
+function saveBounds(win) {
+  try {
+    if (!win.isMinimized() && !win.isFullScreen()) {
+      fs.writeFileSync(boundsFile(), JSON.stringify(win.getBounds()));
+    }
+  } catch {}
+}
 
 const errorPage = (detail) =>
   "data:text/html;charset=utf-8," +
@@ -21,13 +60,12 @@ const errorPage = (detail) =>
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1360,
-    height: 860,
+    ...loadBounds(),
     minWidth: 900,
     minHeight: 600,
     title: "clearAI 案件管理ダッシュボード",
     autoHideMenuBar: true,
-    backgroundColor: "#0a0a0a",
+    backgroundColor: "#fafafa",
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -36,18 +74,24 @@ function createWindow() {
   });
 
   win.loadURL(APP_URL);
+  win.on("close", () => saveBounds(win));
 
-  // アプリ外のリンクはOSの既定ブラウザで開く
+  // 新規ウィンドウは作らない: 同一オリジンは同じウィンドウで、外部はOSの既定アプリで開く
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith(APP_URL)) return { action: "allow" };
-    shell.openExternal(url);
-    return { action: "deny" };
-  });
-  win.webContents.on("will-navigate", (e, url) => {
-    if (!url.startsWith(APP_URL) && !url.startsWith("data:")) {
-      e.preventDefault();
+    if (isAppUrl(url)) {
+      win.loadURL(url);
+    } else if (isSafeExternalUrl(url)) {
       shell.openExternal(url);
     }
+    return { action: "deny" };
+  });
+
+  // レンダラー起点の遷移は同一オリジンのみ許可（data:等への遷移も遮断。
+  // main側のloadURLはこのイベントの対象外なのでエラー画面表示は影響を受けない）
+  win.webContents.on("will-navigate", (e, url) => {
+    if (isAppUrl(url)) return;
+    e.preventDefault();
+    if (isSafeExternalUrl(url)) shell.openExternal(url);
   });
 
   // 読み込み失敗（オフライン等）はリトライ画面へ。-3(ABORTED)はSPA遷移で起きるので無視
@@ -58,6 +102,11 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  // Web側が権限を要求しても基本拒否（コピー操作のみ許可）
+  session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
+    callback(permission === "clipboard-sanitized-write");
+  });
+
   createWindow();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

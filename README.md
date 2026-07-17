@@ -35,3 +35,7 @@ npm run dist:win # Windows ビルド
    npm run dist:mac
    gh release upload vX.Y.Z dist/clearAI-Dashboard-mac.dmg
    ```
+
+## 補足
+
+- 自動更新(electron-updater)は未実装。新バージョンは /releases/latest の固定名アセットを再ダウンロードする。
