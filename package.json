@@ -1,0 +1,65 @@
+{
+  "name": "anken-kanri-desktop",
+  "productName": "clearAI Dashboard",
+  "version": "1.0.0",
+  "description": "clearAI 案件管理ダッシュボード デスクトップアプリ (Windows / macOS)",
+  "main": "main.js",
+  "author": "clearAI Inc.",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:win": "electron-builder --win --publish never"
+  },
+  "devDependencies": {
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "jp.clearai.anken-kanri",
+    "productName": "clearAI Dashboard",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "hardenedRuntime": true,
+      "artifactName": "clearAI-Dashboard-mac.${ext}"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "clearAI-Dashboard-windows-setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "kante0218",
+      "repo": "anken-kanri-desktop",
+      "releaseType": "release"
+    }
+  }
+}
