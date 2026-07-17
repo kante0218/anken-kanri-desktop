@@ -7,11 +7,11 @@ const errorPage = (detail) =>
   encodeURIComponent(`<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><title>接続エラー</title>
 <style>
-  body{font-family:-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif;background:#0a0a0a;color:#fafafa;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+  body{font-family:-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif;background:#fafafa;color:#18181b;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
   .box{text-align:center;max-width:28rem;padding:2rem}
   h1{font-size:1.1rem;font-weight:600;margin:0 0 .5rem}
-  p{font-size:.85rem;color:#a1a1aa;margin:0 0 1.5rem}
-  button{background:#fafafa;color:#0a0a0a;border:0;border-radius:.5rem;padding:.6rem 1.6rem;font-size:.9rem;font-weight:600;cursor:pointer}
+  p{font-size:.85rem;color:#71717a;margin:0 0 1.5rem}
+  button{background:#18181b;color:#fafafa;border:0;border-radius:.5rem;padding:.6rem 1.6rem;font-size:.9rem;font-weight:600;cursor:pointer}
 </style></head><body>
 <div class="box">
   <h1>ダッシュボードに接続できません</h1>
