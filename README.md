@@ -1,6 +1,6 @@
 # clearAI Dashboard (Desktop)
 
-clearAI 案件管理ダッシュボード ( https://anken-kanri-ten.vercel.app ) のデスクトップアプリ版。
+clearAI 案件管理ダッシュボード ( https://anken.clearai.jp ) のデスクトップアプリ版。
 Electron シェルが本番サイトを読み込む方式のため、Web側の更新は自動で反映される。
 
 ## ダウンロード
