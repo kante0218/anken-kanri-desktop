@@ -2,7 +2,7 @@ const { app, BrowserWindow, shell, session } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
-const APP_URL = "https://anken-kanri-ten.vercel.app";
+const APP_URL = "https://anken.clearai.jp";
 const APP_ORIGIN = new URL(APP_URL).origin;
 
 function isAppUrl(rawUrl) {
